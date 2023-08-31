@@ -1,40 +1,31 @@
-
-# -*- coding: utf-8 -*-
 import requests
-import json
+import bjns
+cookies = {
+    'think_language': 'zh-CN',
+    'PHPSESSID': bjns.get_cookies(),
+    'bjrcb_info': '04B4ED68F430C5C0EB0FC747913BA21B06B395FA476B3B211F1737507EC1C65DF6BCBCF7F5569CA6B17EDF9312D5DE8CC6AC02EBC970958D6802BA81D6BAA1D741168D3DDAA089CF6B9075693692AE1392FCC685B361F1AC8371DDED2DF54BB342025A1B095073292789943E',
+}
 
+headers = {
+    'Host': 'bjrcb.mocentre.cn',
+    'Connection': 'keep-alive',
+    'Upgrade-Insecure-Requests': '1',
+    'User-Agent': 'Mozilla/5.0 (Linux; Android 13; M2012K11C Build/TKQ1.220829.002; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/104.0.5112.97 Mobile Safari/537.36 App/BJRCB',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+    'X-Requested-With': 'cn.com.bjns.mbank',
+    'Sec-Fetch-Site': 'same-origin',
+    'Sec-Fetch-Mode': 'navigate',
+    'Sec-Fetch-User': '?1',
+    'Sec-Fetch-Dest': 'document',
+    'Referer': 'https://bjrcb.mocentre.cn/Wap/PolyPage/index?keymark=HdzqName&login_flag=1&Cid=04B4ED68F430C5C0EB0FC747913BA21B06B395FA476B3B211F1737507EC1C65DF6BCBCF7F5569CA6B17EDF9312D5DE8CC6AC02EBC970958D6802BA81D6BAA1D741168D3DDAA089CF6B9075693692AE1392FCC685B361F1AC8371DDED2DF54BB342025A1B095073292789943E',
+    # 'Accept-Encoding': 'gzip, deflate',
+    'Accept-Language': 'zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7',
+    # 'Cookie': 'think_language=zh-CN; PHPSESSID=ak7q655p8c24ni7auceik34h7b; bjrcb_info=04B4ED68F430C5C0EB0FC747913BA21B06B395FA476B3B211F1737507EC1C65DF6BCBCF7F5569CA6B17EDF9312D5DE8CC6AC02EBC970958D6802BA81D6BAA1D741168D3DDAA089CF6B9075693692AE1392FCC685B361F1AC8371DDED2DF54BB342025A1B095073292789943E',
+}
 
-def push_report(web_hook):
-    # 定时任务触发钉钉报告推送
-    key_word = "SEC2309326f38745cfa49ca9cc01d7e9b7afc95c434ad304ad08f073c530f33716b"
-
-    header = {
-        "Content-Type": "application/json;charset=UTF-8"
-    }
-    message_body = {
-        "msgtype": "markdown",
-        "markdown": {
-            "title": key_word,
-            "text": "#### %s \n" % "消息推送展示项目：钉钉" +
-                    "##### •  环境：测试环境 \n" +
-                    "##### •  类型：%s \n" % "消息推送" +
-                    "##### •  测试结果：%s \n" % "通过"
-        },
-        "at": {
-            "atMobiles": [],
-            "isAtAll": False
-        }
-    }
-    send_data = json.dumps(message_body)  # 将字典类型数据转化为json格式
-    ChatBot = requests.post(url=web_hook, data=send_data, headers=header)
-    opener = ChatBot.json()
-    if opener["errmsg"] == "ok":
-        print(u"%s 通知消息发送成功！" % opener)
-    else:
-        print(u"通知消息发送失败，原因：{}".format(opener))
-
-
-if __name__ == '__main__':
-    # webhook 来自于 获取机器人webhook：复制webhook 中的那个值
-    webhook = "https://oapi.dingtalk.com/robot/send?access_token=fc392f3a66f59852ccbd233170c3e5f0dc836d124fc8cfe263914bc1f65a8595"
-    push_report(webhook)
+response = requests.get(
+    'https://bjrcb.mocentre.cn/Wap/LotteryDrawCommon/index/alone/1/token/mocentreabc/lotteryKey/fenghuang1.html',
+    cookies=cookies,
+    headers=headers,
+)
+print(response.cookies)
