@@ -1,45 +1,56 @@
-import re
-import requests
+import tkinter as tk
+from tkinter import ttk
+from tkinter import messagebox
+from datetime import datetime
+import random
 
-def fb():
-    cookies = {
-        'think_language': 'zh-CN',
-        'PHPSESSID': 'gjcsrrejd54fkmr5fhdr24orqa',
-        'bjrcb_info': '04B4ED68F430C5C0EB0FC747913BA21B06B395FA476B3B211F1737507EC1C65DF6BCBCF7F5569CA6B17EDF9312D5DE8CC6AC02EBC970958D6802BA81D6BAA1D741168D3DDAA089CF6B9075693692AE1392FCC685B361F1AC8371DDED2DF54BB342025A1B095073292789943E',
-    }
+def print_entry():
+    text.insert(tk.END, entry.get() + '\n')
 
-    headers = {
-        'Host': 'bjrcb.mocentre.cn',
-        'Connection': 'keep-alive',
-        'Upgrade-Insecure-Requests': '1',
-        'User-Agent': 'Mozilla/5.0 (Linux; Android 13; M2012K11C Build/TKQ1.220829.002; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/104.0.5112.97 Mobile Safari/537.36 App/BJRCB',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-        'X-Requested-With': 'cn.com.bjns.mbank',
-        'Sec-Fetch-Site': 'same-origin',
-        'Sec-Fetch-Mode': 'navigate',
-        'Sec-Fetch-User': '?1',
-        'Sec-Fetch-Dest': 'document',
-        'Referer': 'https://bjrcb.mocentre.cn/Wap/PolyPage/index?keymark=HdzqName&login_flag=1&Cid=04B4ED68F430C5C0EB0FC747913BA21B06B395FA476B3B211F1737507EC1C65DF6BCBCF7F5569CA6B17EDF9312D5DE8CC6AC02EBC970958D6802BA81D6BAA1D741168D3DDAA089CF6B9075693692AE1392FCC685B361F1AC8371DDED2DF54BB342025A1B095073292789943E',
-        # 'Accept-Encoding': 'gzip, deflate',
-        'Accept-Language': 'zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7',
-        # 'Cookie': 'think_language=zh-CN; PHPSESSID=ak7q655p8c24ni7auceik34h7b; bjrcb_info=04B4ED68F430C5C0EB0FC747913BA21B06B395FA476B3B211F1737507EC1C65DF6BCBCF7F5569CA6B17EDF9312D5DE8CC6AC02EBC970958D6802BA81D6BAA1D741168D3DDAA089CF6B9075693692AE1392FCC685B361F1AC8371DDED2DF54BB342025A1B095073292789943E',
-    }
+def calculate_birth_year():
+    current_year = datetime.now().year
+    birth_year = current_year - int(age_entry.get())
+    text.insert(tk.END, '你是' + str(birth_year) + '年出生的\n')
+    if age_entry.get() == '99':
+        messagebox.showinfo("祝福", "祝您活到99岁")
+        root.destroy()
 
-    response = requests.get(
-        'https://bjrcb.mocentre.cn/Wap/LotteryDrawCommon/index/alone/1/token/mocentreabc/lotteryKey/fenghuang1.html',
-        cookies=cookies,
-        headers=headers,
-    )
-    data = str(response.cookies)
-    pattern = r'fenghuang1_user=(.*?) for'
+def on_closing():
+    if messagebox.askokcancel("退出", "你确定要退出吗?"):
+        root.geometry(f'{random.randint(100, 1000)}x{random.randint(100, 1000)}')
 
-    match = re.search(pattern, data)
-    if match:
-        variable_value = match.group(1)
-        variable_value=str(variable_value)
-        print(variable_value)
-        return variable_value
-    else:
-        print("Variable not found.")
+root = tk.Tk()
+root.title("图形化界面")
+root.geometry('500x500')  # 调整窗口大小
+root.protocol("WM_DELETE_WINDOW", on_closing)
 
-fb()
+frame = tk.Frame(root)
+frame.pack(padx=10, pady=10)  # 增加内边距
+
+left_frame = tk.Frame(frame)
+left_frame.pack(side=tk.LEFT, padx=10, pady=10)  # 增加内边距
+
+right_frame = tk.Frame(frame)
+right_frame.pack(side=tk.RIGHT, padx=10, pady=10)  # 增加内边距
+
+entry = ttk.Entry(left_frame, width=30)  # 调整输入框大小
+entry.pack(pady=10)  # 增加内边距
+
+button = ttk.Button(left_frame, text="打印输入", command=print_entry)
+button.pack(pady=10)  # 增加内边距
+
+age_entry = ttk.Entry(left_frame, width=30)  # 调整输入框大小
+age_entry.pack(pady=10)  # 增加内边距
+
+age_button = ttk.Button(left_frame, text="计算出生年份", command=calculate_birth_year)
+age_button.pack(pady=10)  # 增加内边距
+
+text = tk.Text(right_frame, width=30, height=10)  # 调整文本框大小
+text.pack(pady=10)  # 增加内边距
+
+root.mainloop()
+
+
+
+
+
