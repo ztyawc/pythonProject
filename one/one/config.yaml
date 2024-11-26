@@ -1,0 +1,9 @@
+API_URL: https://api.a9a2bc4.com/v2.5/bootstrap
+APP_VERSION: 2.5.4
+PLATFORM: '2'
+TOKEN: eyxxxxxxxxxxxxxxxxxxxx
+USER_KEY: xxxxxxxxxxxxxxxxxxxxx
+UUID: xxxxxxxx-AAAA-AAAA-xxxx-xxxxxxxxxxxx
+wxpusher_appToken: AT_xxxxxxxxxxxx
+wxpusher_uids:
+- UID_xxxxxxxxxxxxx
