@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>磁力链接搜索</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-2xl mx-auto">
+            <h1 class="text-3xl font-bold text-center mb-8 text-gray-800">磁力链接搜索</h1>
+            
+            <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+                <form id="searchForm" class="flex gap-4">
+                    <input type="text" id="query" name="query" 
+                           class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           placeholder="请输入搜索内容..." required>
+                    <button type="submit" 
+                            class="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        搜索
+                    </button>
+                </form>
+            </div>
+
+            <div id="loading" class="hidden">
+                <div class="flex justify-center items-center">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                    <span class="ml-2 text-gray-600">搜索中...</span>
+                </div>
+            </div>
+
+            <div id="error" class="hidden">
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
+                    <span id="errorMessage"></span>
+                </div>
+            </div>
+
+            <div id="results" class="space-y-4"></div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('searchForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const query = document.getElementById('query').value;
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+            const results = document.getElementById('results');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            // 重置显示状态
+            loading.classList.remove('hidden');
+            error.classList.add('hidden');
+            results.innerHTML = '';
+            
+            try {
+                const response = await fetch('/search', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `query=${encodeURIComponent(query)}`
+                });
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    errorMessage.textContent = data.error;
+                    error.classList.remove('hidden');
+                } else if (data.magnets && data.magnets.length > 0) {
+                    data.magnets.forEach(magnet => {
+                        const card = document.createElement('div');
+                        card.className = 'bg-white rounded-lg shadow-md p-6';
+                        
+                        const tags = magnet.tags.map(tag => 
+                            `<span class="inline-block bg-blue-100 text-blue-800 text-sm px-2 py-1 rounded mr-2">${tag}</span>`
+                        ).join('');
+                        
+                        card.innerHTML = `
+                            <h3 class="text-lg font-semibold mb-2">${magnet.name}</h3>
+                            <div class="mb-2">${tags}</div>
+                            <div class="text-sm text-gray-600 mb-2">
+                                <span class="mr-4">大小: ${magnet.size}</span>
+                                ${magnet.files ? `<span class="mr-4">文件数: ${magnet.files}</span>` : ''}
+                                <span>发布时间: ${magnet.date}</span>
+                            </div>
+                            <div class="mt-4">
+                                <a href="${magnet.magnet}" 
+                                   class="inline-block bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                                    下载
+                                </a>
+                            </div>
+                        `;
+                        
+                        results.appendChild(card);
+                    });
+                } else {
+                    errorMessage.textContent = '未找到相关内容';
+                    error.classList.remove('hidden');
+                }
+            } catch (err) {
+                errorMessage.textContent = '搜索过程中发生错误，请稍后重试';
+                error.classList.remove('hidden');
+            } finally {
+                loading.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html> 
